@@ -12,6 +12,6 @@
         public int Aforo_Max { get; set; }
         private List<Tickets> Titcket { get; set; }
         public bool Estado { get; set; }
-        public int Id_Categoria { get; set; }
+        public int Categoria { get; set; }
     }
 }
