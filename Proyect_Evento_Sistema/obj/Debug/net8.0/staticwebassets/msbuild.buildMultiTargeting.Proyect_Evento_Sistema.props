@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Proyect_Evento_Sistema.props" />
+</Project>

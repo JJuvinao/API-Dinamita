@@ -1,0 +1,178 @@
+[
+  {
+    "ContainingType": "Proyect_Evento_Sistema.Controllers.PersonasController",
+    "Method": "GetPersona",
+    "RelativePath": "{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Proyect_Evento_Sistema.Models.Persona",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Proyect_Evento_Sistema.Controllers.PersonasController",
+    "Method": "PutPersona",
+    "RelativePath": "{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "Id_usuario",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Cc_usuario",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "F_nacimiento",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "Nombre",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Apellido",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Sexo",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Nom_Ubi_pais",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Telefono",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Correo",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Contrasena",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Rol",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Estado",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Tickets",
+        "Type": "System.Collections.Generic.List\u00601[[Proyect_Evento_Sistema.Models.Ticket, Proyect_Evento_Sistema, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyect_Evento_Sistema.Controllers.PersonasController",
+    "Method": "DeletePersona",
+    "RelativePath": "{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyect_Evento_Sistema.Controllers.LoginController",
+    "Method": "PostLogin",
+    "RelativePath": "api/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loginDto",
+        "Type": "Proyect_Evento_Sistema.Models.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyect_Evento_Sistema.Controllers.LoginController",
+    "Method": "Register",
+    "RelativePath": "api/Login/Register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Proyect_Evento_Sistema.Models.RegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyect_Evento_Sistema.Controllers.WeatherForecastController",
+    "Method": "Get",
+    "RelativePath": "WeatherForecast",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Proyect_Evento_Sistema.WeatherForecast, Proyect_Evento_Sistema, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetWeatherForecast"
+  }
+]
