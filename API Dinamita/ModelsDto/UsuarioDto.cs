@@ -1,4 +1,5 @@
-﻿namespace API_Dinamita.ModelsDto
+﻿
+namespace API_Dinamita.ModelsDto
 {
     public class UsuarioDto
     {
@@ -7,5 +8,6 @@
         public string Apellido { get; set; }
         public string Telefono { get; set; }
         public string Correo { get; set; }
+        public string Rol { get; set; }
     }
 }
