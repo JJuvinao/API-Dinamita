@@ -1,4 +1,6 @@
-﻿namespace API_Dinamita.Models
+﻿using System.Net.Sockets;
+
+namespace API_Dinamita.Models
 {
     public class Eventos
     {
@@ -10,7 +12,7 @@
         public DateTime Fecha { get; set; }
         public int Duracion { get; set; }
         public int Aforo_Max { get; set; }
-        private List<Tickets> Titcket { get; set; }
+        public List<Tickets> Tickets { get; set; } = new List<Tickets>();
         public bool Estado { get; set; }
         public int Id_Categoria { get; set; }
     }

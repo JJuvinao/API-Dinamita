@@ -1,19 +1,14 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-namespace API_Dinamita.Models
+﻿namespace API_Dinamita.ModelsDto
 {
-    public class Tickets
+    public class TicketDto
     {
-        [Key]
-        public int Id_Ticket { get; set; }
         public string Codigo { get; set; }
         public float Precio { get; set; }
         public DateTime Fecha_Expedicion { get; set; }
         public string Nombre_Evento { get; set; }
-        public int Id_Evento { get; set; }
+        public string Id_Evento { get; set; }
         public int Categoria { get; set; }
         public DateTime Fecha_Entrada { get; set; }
         public bool Estado { get; set; }
-        public int Id_Carrito { get; set; }
     }
 }
