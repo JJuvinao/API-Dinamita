@@ -39,6 +39,7 @@ namespace API_Dinamita.Controllers
             });
         }
 
+
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UsuarioRegister usuarioR)
         {
