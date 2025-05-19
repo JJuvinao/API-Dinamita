@@ -1,5 +1,6 @@
 ﻿
-using API_Dinamita.ModelsDto;
+
+using API_Dinamita.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,13 +17,13 @@ namespace API_Dinamita.Helpers
             _config = config;
         }
 
-        public string GenerateToken(UsuarioDto user)
+        public string GenerateToken(Personas persona)
         {
             var claims = new[]
-        {
-            new Claim(ClaimTypes.Name, user.Nombre),
-            new Claim(ClaimTypes.Role, user.Rol)
-        };
+            {
+                new Claim(ClaimTypes.NameIdentifier, persona.NombreUsuario),
+                new Claim(ClaimTypes.Role, persona.Rol)
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
