@@ -10,9 +10,10 @@ namespace API_Dinamita.Models
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public string Telefono { get; set; }
+        public string NombreUsuario { get; set; }
         public string PasswordHash { get; set; }
         public string Correo { get; set; }
         public string Rol { get; set; }
-        public int Id_Carrito { get; set; }
+        public int? Id_Carrito { get; set; }
     }
 }
