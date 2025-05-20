@@ -11,9 +11,9 @@ namespace API_Dinamita.Models
         public DateTime Fecha_Expedicion { get; set; }
         public string Nombre_Evento { get; set; }
         public int Id_Evento { get; set; }
-        public int Categoria { get; set; }
+        public string Categoria { get; set; }
         public DateTime Fecha_Entrada { get; set; }
         public bool Estado { get; set; }
-        public int Id_Carrito { get; set; }
+        public int Id_Usuario { get; set; }
     }
 }

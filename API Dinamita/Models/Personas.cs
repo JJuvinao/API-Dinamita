@@ -14,6 +14,5 @@ namespace API_Dinamita.Models
         public string PasswordHash { get; set; }
         public string Correo { get; set; }
         public string Rol { get; set; }
-        public int? Id_Carrito { get; set; }
     }
 }

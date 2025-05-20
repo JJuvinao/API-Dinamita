@@ -13,6 +13,5 @@ namespace API_Dinamita.Models
         public int N_Ventas { get; set; }
         public int N_Asistencias { get; set; }
         public string Descripcion { get; set; }
-        public int Id_Administrador { get; set; }
     }
 }

@@ -11,7 +11,6 @@ namespace API_Dinamita.Models
         public DbSet<Tickets> Tickets { get; set; }
         public DbSet<Categorias> Categorias { get; set; }
         public DbSet<Eventos> Eventos { get; set; }
-        public DbSet<Carrito> Carrito { get; set; }
         public DbSet<Reportes>  Reportes { get; set; }
 
     }

@@ -7,7 +7,7 @@
         public DateTime Fecha_Expedicion { get; set; }
         public string Nombre_Evento { get; set; }
         public string Id_Evento { get; set; }
-        public int Categoria { get; set; }
+        public string Categoria { get; set; }
         public DateTime Fecha_Entrada { get; set; }
         public bool Estado { get; set; }
     }

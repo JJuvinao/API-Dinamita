@@ -31,11 +31,21 @@ namespace API_Dinamita.Controllers
             }
 
             var token = _jwtHelper.GenerateToken(persona);
+            var user = new UsuarioFront
+            {
+                N_Identificacion = persona.N_Identificacion,
+                Nombre = persona.Nombre,
+                Apellido = persona.Apellido,
+                Telefono = persona.Telefono,
+                NombreUsuario = persona.NombreUsuario,
+                Correo = persona.Correo,
+                Rol = persona.Rol
+            };
 
             return Ok(new
             {
                 token,
-                user = new { persona.NombreUsuario, persona.Nombre, persona.Apellido}
+                user
             });
         }
 
@@ -56,8 +66,7 @@ namespace API_Dinamita.Controllers
                 NombreUsuario = usuarioR.NombreUsuario,
                 PasswordHash = hashedPassword,
                 Correo = usuarioR.Correo,
-                Rol = "Usuario",
-                Id_Carrito = null
+                Rol = "Usuario"
             };
 
             _context.Personas.Add(user);
