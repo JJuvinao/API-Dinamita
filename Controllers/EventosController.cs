@@ -93,25 +93,25 @@ namespace API_Dinamita.Controllers
             return NoContent();
         }
         
-        [HttpGet("listar")]
-        public async Task<ActionResult<List<EventoDto>>> GetListaEventos()
-        {
-            var eventos = await _context.Eventos.ToListAsync();
+        //[HttpGet("listar")]
+        //public async Task<ActionResult<List<EventoDto>>> GetListaEventos()
+        //{
+        //    var eventos = await _context.Eventos.ToListAsync();
 
-            var listaDto = eventos.Select(e => new EventoDto
-            {
-                Id_Evento = e.Id_Evento,
-                Nombre_Evento = e.Nombre_Evento,
-                Descripcion = e.Descripcion,
-                Nombre_Lugar = e.Nombre_Lugar,
-                Direccion_Lugar = e.Direccion_Lugar,
-                Fecha = e.Fecha,
-                Aforo_Max = e.Aforo_Max,
-                Estado = e.Estado
-            }).ToList();
+        //    var listaDto = eventos.Select(e => new EventoDto
+        //    {
+        //        Id_Evento = e.Id_Evento,
+        //        Nombre_Evento = e.Nombre_Evento,
+        //        Descripcion = e.Descripcion,
+        //        Nombre_Lugar = e.Nombre_Lugar,
+        //        Direccion_Lugar = e.Direccion_Lugar,
+        //        Fecha = e.Fecha,
+        //        Aforo_Max = e.Aforo_Max,
+        //        Estado = e.Estado
+        //    }).ToList();
 
-            return Ok(listaDto);
-        }
+        //    return Ok(listaDto);
+        //}
 
 
         private bool EventoExists(int id)
