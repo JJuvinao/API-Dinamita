@@ -20,7 +20,7 @@ namespace API_Dinamita.Controllers
             _context = context;
         }
 
-        [HttpPost("{Id_Evento}")]
+        [HttpPost]
         [Authorize(Roles = "Usuario")]
         public async Task<ActionResult<TicketDto>> PostTicket(TicketDto ticketDto, int cantidad)
         {
@@ -28,8 +28,7 @@ namespace API_Dinamita.Controllers
             if (evento == null)
                 return NotFound();
 
-            int diferencia = evento.Aforo_Max - evento.Tickets_Vendidos;
-            if (diferencia < cantidad)
+            if (evento.Tickets_Disponibles < cantidad)
                 return BadRequest("Cantidad no permitida");
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -52,10 +51,9 @@ namespace API_Dinamita.Controllers
                     Id_Evento = ticketDto.Id_Evento
                 };
                 _context.Tickets.Add(ticket);
-                evento.Tickets_Vendidos += 1;
-                await _context.SaveChangesAsync();
+                evento.Tickets_Disponibles -= 1;
             }
-
+            await _context.SaveChangesAsync();
             return Ok(new {
                 mensaje = "Compra realizada exitosamente"
             });
@@ -79,7 +77,7 @@ namespace API_Dinamita.Controllers
             float total = 0;
             if (ticketsCarrito != null)
             {
-                List<TicketForm> ticketList = new List<TicketForm>();
+                List<TicketFront> ticketList = new List<TicketFront>();
                 foreach (var ticket in ticketsCarrito)
                 {
                     ticketList.Add(ParseTicket(ticket));
@@ -100,9 +98,9 @@ namespace API_Dinamita.Controllers
             
         }
 
-        private TicketForm ParseTicket(Tickets ticket)
+        private TicketFront ParseTicket(Tickets ticket)
         {
-            return new TicketForm
+            return new TicketFront
             {
                 Id_Ticket = ticket.Id_Ticket,
                 Nombre_Evento = ticket.Nombre_Evento,

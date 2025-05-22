@@ -2,7 +2,7 @@
 {
     public class CarritoDto
     {
-        public List<TicketForm>? Tickets { get; set; }
+        public List<TicketFront>? Tickets { get; set; }
         public float Total { get; set; }
     }
 }

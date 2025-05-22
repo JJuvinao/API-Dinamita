@@ -1,4 +1,6 @@
 ﻿using API_Dinamita.Models;
+using API_Dinamita.ModelsDto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,86 +18,89 @@ namespace API_Dinamita.Controllers
         }
 
         // GET: api/Eventos
-        [HttpGet]
+        [HttpGet()]
         public async Task<ActionResult<IEnumerable<Eventos>>> GetEventos()
         {
-            return await _context.Eventos.Include(e => e.Tickets).ToListAsync();
-        }
+            var eventos = await _context.Eventos.ToListAsync();
+            var eventosFiltrados = eventos.Where(E => E.Estado == false);
 
-        // GET: api/Eventos/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Eventos>> GetEvento(int id)
-        {
-            var evento = await _context.Eventos.Include(e => e.Tickets)
-                                               .FirstOrDefaultAsync(e => e.Id_Evento == id);
-
-            if (evento == null)
-            {
+            if (eventosFiltrados == null)
                 return NotFound();
+
+            List<EventoFront> eventosFront = new List<EventoFront>();
+            foreach (var evento in eventosFiltrados)
+            {
+                eventosFront.Add(ParseEvento(evento));
             }
 
-            return evento;
+            return Ok(eventosFront);
+        }
+
+        private EventoFront ParseEvento(Eventos evento)
+        {
+            return new EventoFront
+            {
+                Id_Evento = evento.Id_Evento,
+                Nombre_Evento = evento.Nombre_Evento,
+                Descripcion = evento.Descripcion,
+                Nombre_Lugar = evento.Nombre_Lugar,
+                Direccion_Lugar = evento.Direccion_Lugar,
+                Fecha = evento.Fecha,
+                PrecioTicket = evento.PrecioTicket,
+                Tickets_Disponibles = evento.Tickets_Disponibles,
+                Id_Categoria = evento.Id_Categoria
+            };
         }
 
         // POST: api/Eventos
         [HttpPost]
-        public async Task<ActionResult<Eventos>> PostEvento(Eventos evento)
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<Eventos>> PostEvento(EventoDto eventoDto)
         {
-            _context.Eventos.Add(evento);
+            _context.Eventos.Add(new Eventos
+            {
+                Nombre_Evento = eventoDto.Nombre_Evento,
+                Descripcion = eventoDto.Descripcion,
+                Nombre_Lugar = eventoDto.Nombre_Lugar,
+                Direccion_Lugar = eventoDto.Direccion_Lugar,
+                Fecha = eventoDto.Fecha,
+                Aforo_Max = eventoDto.Aforo_Max,
+                PrecioTicket = eventoDto.PrecioTicket,
+                Tickets_Disponibles = eventoDto.Aforo_Max,
+                Estado = false,
+                Id_Categoria = eventoDto.Id_Categoria
+            });
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEvento), new { id = evento.Id_Evento }, evento);
+            return Ok("Evento guardado correctamente");
         }
 
-        // PUT: api/Eventos/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEvento(int id, Eventos evento)
+        [HttpPut("{Id_Evento}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ModificarEvento(int Id_Evento)
         {
-            if (id != evento.Id_Evento)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(evento).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EventoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/Eventos/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEvento(int id)
-        {
-            var evento = await _context.Eventos.FindAsync(id);
+            var evento = await _context.Eventos.FindAsync(Id_Evento);
             if (evento == null)
-            {
                 return NotFound();
-            }
+
+            evento.Estado = true;
+            _context.SaveChanges();
+
+            return Ok($"Estado del evento {evento.Nombre_Evento} cambiado exitosamente");
+        }
+
+
+        [HttpDelete("{Id_Evento}")]
+        public async Task<IActionResult> DeleteEvento(int Id_Evento)
+        {
+            var evento = await _context.Eventos.FindAsync(Id_Evento);
+            if (evento == null)
+                return NotFound();
 
             _context.Eventos.Remove(evento);
             await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
-
-        private bool EventoExists(int id)
-        {
-            return _context.Eventos.Any(e => e.Id_Evento == id);
+            return Ok("Evento eliminado exitosamente");
         }
     }
 }

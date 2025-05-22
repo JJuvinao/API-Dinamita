@@ -9,7 +9,7 @@
         public int Id_Evento { get; set; }
     }
 
-    public class TicketForm
+    public class TicketFront
     {
         public int Id_Ticket { get; set; }
         public string Nombre_Evento { get; set; }
