@@ -51,7 +51,7 @@ namespace API_Dinamita.Controllers
 
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(UsuarioRegister usuarioR)
+        public async Task<IActionResult> RegisterUser(UsuarioRegister usuarioR)
         {
             if (_context.Personas.Any(P => P.NombreUsuario == usuarioR.NombreUsuario))
                 return BadRequest("El usuario ya existe.");

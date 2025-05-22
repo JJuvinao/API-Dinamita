@@ -21,7 +21,8 @@ namespace API_Dinamita.Helpers
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, persona.NombreUsuario),
+                new Claim(ClaimTypes.NameIdentifier, persona.N_Identificacion.ToString()),
+                new Claim(ClaimTypes.Name, persona.NombreUsuario),
                 new Claim(ClaimTypes.Role, persona.Rol)
             };
 
