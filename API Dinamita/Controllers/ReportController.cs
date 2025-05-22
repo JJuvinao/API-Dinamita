@@ -19,17 +19,15 @@ namespace API_Dinamita.Controllers
         }
 
         // GET: api/Reportes
-        [Authorize]
+        [Authorize (Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reportes>>> GetReportes()
         {
             return await _context.Reportes.ToListAsync();
-
-
         }
 
         // GET: api/Reporte/5
-        [Authorize]
+        [Authorize (Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Reportes>> GetReporte(int id)
         {
@@ -53,7 +51,7 @@ namespace API_Dinamita.Controllers
         }
 
         // POST: api/Reportes
-        [Authorize]
+        [Authorize (Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Reportes>> PostReporte(Reportes reportess)
         {
@@ -82,7 +80,7 @@ namespace API_Dinamita.Controllers
         }
 
         // PUT
-        [Authorize]
+        [Authorize (Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReporte(int id, Reportes dto)
         {
@@ -122,7 +120,7 @@ namespace API_Dinamita.Controllers
         }
 
         // DELETE
-        [Authorize]
+        [Authorize (Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReporte(int id)
         {
