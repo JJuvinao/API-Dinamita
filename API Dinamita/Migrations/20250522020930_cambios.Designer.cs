@@ -4,6 +4,7 @@ using API_Dinamita.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Dinamita.Migrations
 {
     [DbContext(typeof(ContextDB))]
-    partial class ContextDBModelSnapshot : ModelSnapshot
+    [Migration("20250522020930_cambios")]
+    partial class cambios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,6 +59,9 @@ namespace API_Dinamita.Migrations
                     b.Property<string>("Direccion_Lugar")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Duracion")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Estado")
                         .HasColumnType("bit");
 
@@ -70,12 +76,6 @@ namespace API_Dinamita.Migrations
 
                     b.Property<string>("Nombre_Lugar")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("PrecioTicket")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Tickets_Vendidos")
-                        .HasColumnType("int");
 
                     b.HasKey("Id_Evento");
 
@@ -169,18 +169,18 @@ namespace API_Dinamita.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Ticket"));
 
                     b.Property<string>("Categoria")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CodigoAlfanumerico")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("CodigoQR")
+                    b.Property<string>("Codigo")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Estado")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("EventosId_Evento")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Fecha_Entrada")
                         .HasColumnType("datetime2");
@@ -203,7 +203,21 @@ namespace API_Dinamita.Migrations
 
                     b.HasKey("Id_Ticket");
 
+                    b.HasIndex("EventosId_Evento");
+
                     b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("API_Dinamita.Models.Tickets", b =>
+                {
+                    b.HasOne("API_Dinamita.Models.Eventos", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("EventosId_Evento");
+                });
+
+            modelBuilder.Entity("API_Dinamita.Models.Eventos", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }
