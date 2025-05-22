@@ -22,44 +22,43 @@ namespace API_Dinamita.Controllers
 
         [HttpPost("{Id_Evento}")]
         [Authorize(Roles = "Usuario")]
-        public async Task<ActionResult<TicketDto>> PostTicket(int Id_Evento, string categoriaTicket)
+        public async Task<ActionResult<TicketDto>> PostTicket(TicketDto ticketDto, int cantidad)
         {
-            var evento = await _context.Eventos.FindAsync(Id_Evento);
+            var evento = await _context.Eventos.FindAsync(ticketDto.Id_Evento);
             if (evento == null)
                 return NotFound();
-            if (evento.Aforo_Max <= evento.Tickets_Vendidos)
-                return BadRequest("Se han vendido todas la boletas");
+
+            int diferencia = evento.Aforo_Max - evento.Tickets_Vendidos;
+            if (diferencia < cantidad)
+                return BadRequest("Cantidad no permitida");
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            float precio = CalcularPrecio(evento.PrecioTicket, categoriaTicket);
-            string codigo = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
-            byte[] codigoQR = GenerarQR(codigo);
-
-            var ticket = new Tickets
+            for (int i = 0; i < cantidad; i++)
             {
-                Precio = evento.PrecioTicket,
-                Fecha_Expedicion = DateTime.UtcNow,
-                Nombre_Evento = evento.Nombre_Evento,
-                Categoria = categoriaTicket,
-                Fecha_Entrada = evento.Fecha,
-                CodigoAlfanumerico = codigo,
-                CodigoQR = codigoQR,
-                Estado = false,
-                Id_Usuario = userId,
-                Id_Evento = evento.Id_Evento
-            };
-            _context.Tickets.Add(ticket);
-            evento.Tickets_Vendidos += 1;
-            await _context.SaveChangesAsync();
+                string codigo = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+                byte[] codigoQR = GenerarQR(codigo);
+
+                var ticket = new Tickets
+                {
+                    Precio = ticketDto.Precio,
+                    Fecha_Expedicion = DateTime.UtcNow,
+                    Nombre_Evento = ticketDto.Nombre_Evento,
+                    Categoria = ticketDto.Categoria,
+                    Fecha_Entrada = ticketDto.Fecha_Entrada,
+                    CodigoAlfanumerico = codigo,
+                    CodigoQR = codigoQR,
+                    Estado = false,
+                    Id_Usuario = userId,
+                    Id_Evento = ticketDto.Id_Evento
+                };
+                _context.Tickets.Add(ticket);
+                evento.Tickets_Vendidos += 1;
+                await _context.SaveChangesAsync();
+            }
 
             return Ok(new {
                 mensaje = "Compra realizada exitosamente"
             });
-        }
-
-        private float CalcularPrecio(float precioTicket, string categoriaTicket)
-        {
-            return 2000;
         }
 
         private byte[] GenerarQR(string codigo)
@@ -75,19 +74,21 @@ namespace API_Dinamita.Controllers
         public async Task<ActionResult<CarritoDto>> GetCarrito(int Id_Usuario) {
 
             var tickets = await _context.Tickets.ToListAsync();
-            var ticketsCarrito = tickets.Where(T => T.Id_Usuario == Id_Usuario);
+            var ticketsCarrito = tickets.Where(T => T.Id_Usuario == Id_Usuario  &&  T.Estado == false);
 
             float total = 0;
             if (ticketsCarrito != null)
             {
+                List<TicketForm> ticketList = new List<TicketForm>();
                 foreach (var ticket in ticketsCarrito)
                 {
+                    ticketList.Add(ParseTicket(ticket));
                     total = total + ticket.Precio;
                 }
 
                 var carrito = new CarritoDto
                 {
-                    Tickets = (List<Tickets>)ticketsCarrito,
+                    Tickets = ticketList,
                     Total = total
                 };
                 return Ok(carrito);
@@ -97,6 +98,19 @@ namespace API_Dinamita.Controllers
                 return BadRequest("No ha realizado compras");
             }
             
+        }
+
+        private TicketForm ParseTicket(Tickets ticket)
+        {
+            return new TicketForm
+            {
+                Id_Ticket = ticket.Id_Ticket,
+                Nombre_Evento = ticket.Nombre_Evento,
+                Categoria = ticket.Categoria,
+                Fecha_Entrada = ticket.Fecha_Entrada,
+                CodigoAlfanumerico = ticket.CodigoAlfanumerico,
+                CodigoQR = ticket.CodigoQR
+            };
         }
 
         [HttpPost("ValidarQR")]
