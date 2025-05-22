@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API_Dinamita.Models;
 using Microsoft.AspNetCore.Authorization;
+using API_Dinamita.ModelsDto;
 
 namespace API_Dinamita.Controllers
 {
@@ -29,15 +30,13 @@ namespace API_Dinamita.Controllers
             return await _context.Categorias.ToListAsync();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{Id_Categoria}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutCategorias(int id, Categorias categoria)
+        public async Task<IActionResult> PutCategorias(int Id_Categoria, CategoriaDto categoriaDto)
         {
-            if (id != categoria.Id_Categoria)
-            {
-                return BadRequest();
-            }
-
+            var categoria = await _context.Categorias.FindAsync(Id_Categoria);
+            
+            categoria.Nombre = categoriaDto.Nombre;
             _context.Entry(categoria).State = EntityState.Modified;
 
             try
@@ -46,7 +45,7 @@ namespace API_Dinamita.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CategoriasExists(id))
+                if (!CategoriasExists(Id_Categoria))
                 {
                     return NotFound();
                 }
@@ -62,12 +61,15 @@ namespace API_Dinamita.Controllers
         
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<Categorias>> PostCategorias(Categorias categorias)
+        public async Task<ActionResult<Categorias>> PostCategorias(CategoriaDto categoriaDto)
         {
-            _context.Categorias.Add(categorias);
+            _context.Categorias.Add(new Categorias
+            {
+                Nombre = categoriaDto.Nombre
+            });
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategorias", new { id = categorias.Id_Categoria }, categorias);
+            return Ok("Categoria creada exitosamente");
         }
 
         
