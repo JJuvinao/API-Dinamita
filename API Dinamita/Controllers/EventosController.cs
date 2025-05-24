@@ -59,7 +59,7 @@ namespace API_Dinamita.Controllers
              Fecha = DateTime.Now,
              Aforo_Max = eventodto.Aforo_Max,
              PrecioTicket = eventodto.PrecioTicket,
-             Tickets_Vendidos = 0,
+             Tickets_Disponible = eventodto.Aforo_Max,
              Estado = true,
              Categoria = eventodto.Categoria
          };
@@ -87,7 +87,7 @@ namespace API_Dinamita.Controllers
             eventoExistente.Direccion_Lugar = evento.Direccion_Lugar;
             eventoExistente.Aforo_Max = evento.Aforo_Max;
             eventoExistente.PrecioTicket = evento.PrecioTicket;
-            eventoExistente.Tickets_Vendidos = evento.Tickets_Vendidos;
+            eventoExistente.Tickets_Disponible = evento.Tickets_Disponible;
             eventoExistente.Estado = evento.Estado;
             eventoExistente.Categoria = evento.Categoria;
 
