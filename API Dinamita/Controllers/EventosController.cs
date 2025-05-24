@@ -67,7 +67,7 @@ namespace API_Dinamita.Controllers
          _context.Eventos.Add(evento);
          await _context.SaveChangesAsync();
 
-         return CreatedAtAction(nameof(PostEvento), new { id = evento.Id_Evento }, evento);
+         return  Ok("Evento guardado correctamente");
      }
 
         // PUT: api/Eventos/5
@@ -123,11 +123,25 @@ namespace API_Dinamita.Controllers
             {
                 return NotFound();
             }
+            evento.Estado = true;
+            _context.SaveChanges();
 
-         _context.Eventos.Remove(evento);
-         await _context.SaveChangesAsync();
+            return Ok($"Estado del evento {evento.Nombre_Evento} cambiado exitosamente");
+        }
 
-         return NoContent();
+
+        [HttpDelete("{Id_Evento}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteEvento(int Id_Evento)
+        {
+             var evento = await _context.Eventos.FindAsync(Id_Evento);
+            if (evento == null)
+                return NotFound();
+
+            _context.Eventos.Remove(evento);
+            await _context.SaveChangesAsync();
+
+            return Ok("Evento eliminado exitosamente");
      }
 
      private bool EventoExists(int id)
