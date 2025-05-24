@@ -1,5 +1,6 @@
-﻿using API_Dinamita.Models;
+using API_Dinamita.Models;
 using API_Dinamita.ModelsDto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -7,37 +8,37 @@ using Eventos = API_Dinamita.Models.Eventos;
 
 namespace API_Dinamita.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EventosController : ControllerBase
-    {
-        private readonly ContextDB _context;
+     [Route("api/[controller]")]
+ [ApiController]
+ public class EventosController : ControllerBase
+ {
+     private readonly ContextDB _context;
 
-        public EventosController(ContextDB context)
-        {
-            _context = context;
-        }
+     public EventosController(ContextDB context)
+     {
+         _context = context;
+     }
 
-        // GET: api/Eventos
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Eventos>>> GetEventos()
-        {
-            return await _context.Eventos.ToListAsync();
-        }
+     // GET: api/Eventos
+     [HttpGet]
+     public async Task<ActionResult<IEnumerable<Eventos>>> GetEventos()
+     {
+         return await _context.Eventos.ToListAsync();
+     }
 
-        // GET: api/Eventos/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Eventos>> GetEvento(int id)
-        {
-            var evento = await _context.Eventos.FirstOrDefaultAsync(e => e.Id_Evento == id);
+     // GET: api/Eventos/5
+     [HttpGet("{id}")]
+     public async Task<ActionResult<Eventos>> GetEvento(int id)
+     {
+         var evento = await _context.Eventos.FirstOrDefaultAsync(e => e.Id_Evento == id);
 
-            if (evento == null)
-            {
-                return NotFound();
-            }
+         if (evento == null)
+         {
+             return NotFound();
+         }
 
-            return evento;
-        }
+         return evento;
+     }
 
         // POST: api/Eventos
         [Authorize (Roles ="Admin")]
@@ -49,25 +50,25 @@ namespace API_Dinamita.Controllers
                 return BadRequest("Los datos del reporte no son válidos.");
             }
 
-            var evento = new Eventos
-            {
-                Nombre_Evento = eventodto.Nombre_Evento,
-                Descripcion = eventodto.Descripcion,
-                Nombre_Lugar = eventodto.Nombre_Lugar,
-                Direccion_Lugar = eventodto.Direccion_Lugar,
-                Fecha = DateTime.Now,
-                Aforo_Max = eventodto.Aforo_Max,
-                PrecioTicket = eventodto.PrecioTicket,
-                Tickets_Vendidos = 0,
-                Estado = true,
-                Categoria = eventodto.Categoria
-            };
+         var evento = new Eventos
+         {
+             Nombre_Evento = eventodto.Nombre_Evento,
+             Descripcion = eventodto.Descripcion,
+             Nombre_Lugar = eventodto.Nombre_Lugar,
+             Direccion_Lugar = eventodto.Direccion_Lugar,
+             Fecha = DateTime.Now,
+             Aforo_Max = eventodto.Aforo_Max,
+             PrecioTicket = eventodto.PrecioTicket,
+             Tickets_Vendidos = 0,
+             Estado = true,
+             Categoria = eventodto.Categoria
+         };
 
-            _context.Eventos.Add(evento);
-            await _context.SaveChangesAsync();
+         _context.Eventos.Add(evento);
+         await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(PostEvento), new { id = evento.Id_Evento }, evento);
-        }
+         return CreatedAtAction(nameof(PostEvento), new { id = evento.Id_Evento }, evento);
+     }
 
         // PUT: api/Eventos/5
         [Authorize(Roles = "Admin")]
@@ -123,15 +124,15 @@ namespace API_Dinamita.Controllers
                 return NotFound();
             }
 
-            _context.Eventos.Remove(evento);
-            await _context.SaveChangesAsync();
+         _context.Eventos.Remove(evento);
+         await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+         return NoContent();
+     }
 
-        private bool EventoExists(int id)
-        {
-            return _context.Eventos.Any(e => e.Id_Evento == id);
-        }
+     private bool EventoExists(int id)
+     {
+         return _context.Eventos.Any(e => e.Id_Evento == id);
+     }
     }
 }
