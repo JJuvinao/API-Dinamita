@@ -113,10 +113,10 @@ namespace API_Dinamita.Controllers
             return Ok("Modificado");
         }
 
-        // DELETE: api/Eventos/5
+        // DELETE: api/Eventos/Estado/5
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEvento(int id)
+        [HttpPut("/Estado/{id}")]
+        public async Task<IActionResult> PutEstadoEvento(int id)
         {
             var evento = await _context.Eventos.FindAsync(id);
             if (evento == null)
