@@ -4,6 +4,7 @@ using API_Dinamita.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Dinamita.Migrations
 {
     [DbContext(typeof(ContextDB))]
-    partial class ContextDBModelSnapshot : ModelSnapshot
+    [Migration("20250522050456_CambiosEventos")]
+    partial class CambiosEventos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,10 +53,6 @@ namespace API_Dinamita.Migrations
                     b.Property<int>("Aforo_Max")
                         .HasColumnType("int");
 
-                    b.Property<string>("Categoria")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(max)");
 
@@ -65,6 +64,9 @@ namespace API_Dinamita.Migrations
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Id_Categoria")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombre_Evento")
                         .HasColumnType("nvarchar(max)");
@@ -138,6 +140,9 @@ namespace API_Dinamita.Migrations
 
                     b.Property<DateTime>("Fecha_Creacion")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Id_Evento")
+                        .HasColumnType("int");
 
                     b.Property<int>("N_Asistencias")
                         .HasColumnType("int");
