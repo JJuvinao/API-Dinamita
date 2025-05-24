@@ -95,6 +95,7 @@ namespace API_Dinamita.Controllers
         public async Task<IActionResult> DeleteEvento(int Id_Evento)
         {
             var evento = await _context.Eventos.FindAsync(Id_Evento);
+
             if (evento == null)
                 return NotFound();
 
