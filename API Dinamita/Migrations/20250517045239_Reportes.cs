@@ -20,11 +20,9 @@ namespace API_Dinamita.Migrations
                     Nombre_Reporte = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Fecha_Creacion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Nombre_Evento = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Id_Evento = table.Column<int>(type: "int", nullable: false),
                     N_Ventas = table.Column<int>(type: "int", nullable: false),
                     N_Asistencias = table.Column<int>(type: "int", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Id_Administrador = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -53,7 +53,7 @@ namespace API_Dinamita.Controllers
         // POST: api/Reportes
         [Authorize (Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<Reportes>> PostReporte(Reportes reportess)
+        public async Task<ActionResult<Reportes>> PostReporte(ReporteDtoCreacion reportess)
         {
             if (reportess == null)
             {
@@ -66,7 +66,6 @@ namespace API_Dinamita.Controllers
                 Nombre_Reporte = reportess.Nombre_Reporte,
                 Fecha_Creacion = DateTime.Now,
                 Nombre_Evento = reportess.Nombre_Evento,
-                Id_Evento = reportess.Id_Evento,
                 N_Ventas = reportess.N_Ventas,
                 N_Asistencias = reportess.N_Asistencias,
                 Descripcion = reportess.Descripcion
