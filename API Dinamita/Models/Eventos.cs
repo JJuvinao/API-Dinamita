@@ -16,6 +16,6 @@ namespace API_Dinamita.Models
         public float PrecioTicket { get; set; }
         public int Tickets_Disponibles { get; set; }
         public bool Estado { get; set; }
-        public int Id_Categoria { get; set; }
+        public string Categoria { get; set; }
     }
 }

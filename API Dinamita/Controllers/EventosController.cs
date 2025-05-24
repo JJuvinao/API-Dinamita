@@ -1,106 +1,125 @@
-﻿using API_Dinamita.Models;
+using API_Dinamita.Models;
 using API_Dinamita.ModelsDto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Eventos = API_Dinamita.Models.Eventos;
 
 namespace API_Dinamita.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EventosController : ControllerBase
-    {
-        private readonly ContextDB _context;
+     [Route("api/[controller]")]
+ [ApiController]
+ public class EventosController : ControllerBase
+ {
+     private readonly ContextDB _context;
 
-        public EventosController(ContextDB context)
-        {
-            _context = context;
-        }
+     public EventosController(ContextDB context)
+     {
+         _context = context;
+     }
 
-        // GET: api/Eventos
-        [HttpGet()]
-        public async Task<ActionResult<IEnumerable<Eventos>>> GetEventos()
-        {
-            var eventos = await _context.Eventos.ToListAsync();
-            var eventosFiltrados = eventos.Where(E => E.Estado == false);
+     // GET: api/Eventos
+     [HttpGet]
+     public async Task<ActionResult<IEnumerable<Eventos>>> GetEventos()
+     {
+         return await _context.Eventos.ToListAsync();
+     }
 
-            if (eventosFiltrados == null)
-                return NotFound();
+     // GET: api/Eventos/5
+     [HttpGet("{id}")]
+     public async Task<ActionResult<Eventos>> GetEvento(int id)
+     {
+         var evento = await _context.Eventos.FirstOrDefaultAsync(e => e.Id_Evento == id);
 
-            List<EventoFront> eventosFront = new List<EventoFront>();
-            foreach (var evento in eventosFiltrados)
-            {
-                eventosFront.Add(ParseEvento(evento));
-            }
+         if (evento == null)
+         {
+             return NotFound();
+         }
 
-            return Ok(eventosFront);
-        }
+         return evento;
+     }
 
-        private EventoFront ParseEvento(Eventos evento)
-        {
-            return new EventoFront
-            {
-                Id_Evento = evento.Id_Evento,
-                Nombre_Evento = evento.Nombre_Evento,
-                Descripcion = evento.Descripcion,
-                Nombre_Lugar = evento.Nombre_Lugar,
-                Direccion_Lugar = evento.Direccion_Lugar,
-                Fecha = evento.Fecha,
-                PrecioTicket = evento.PrecioTicket,
-                Tickets_Disponibles = evento.Tickets_Disponibles,
-                Id_Categoria = evento.Id_Categoria
-            };
-        }
+     // POST: api/Eventos
+     [Authorize (Roles ="Admin")]
+     [HttpPost]
+     public async Task<ActionResult<Eventos>> PostEvento(EventosDto eventodto)
+     {
+         if (eventodto == null)
+         {
+             return BadRequest("Los datos del reporte no son válidos.");
+         }
 
-        // POST: api/Eventos
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<Eventos>> PostEvento(EventoDto eventoDto)
-        {
-            _context.Eventos.Add(new Eventos
-            {
-                Nombre_Evento = eventoDto.Nombre_Evento,
-                Descripcion = eventoDto.Descripcion,
-                Nombre_Lugar = eventoDto.Nombre_Lugar,
-                Direccion_Lugar = eventoDto.Direccion_Lugar,
-                Fecha = eventoDto.Fecha,
-                Aforo_Max = eventoDto.Aforo_Max,
-                PrecioTicket = eventoDto.PrecioTicket,
-                Tickets_Disponibles = eventoDto.Aforo_Max,
-                Estado = false,
-                Id_Categoria = eventoDto.Id_Categoria
-            });
-            await _context.SaveChangesAsync();
+         var evento = new Eventos
+         {
+             Nombre_Evento = eventodto.Nombre_Evento,
+             Descripcion = eventodto.Descripcion,
+             Nombre_Lugar = eventodto.Nombre_Lugar,
+             Direccion_Lugar = eventodto.Direccion_Lugar,
+             Fecha = DateTime.Now,
+             Aforo_Max = eventodto.Aforo_Max,
+             PrecioTicket = eventodto.PrecioTicket,
+             Tickets_Vendidos = 0,
+             Estado = true,
+             Categoria = eventodto.Categoria
+         };
 
-            return Ok("Evento guardado correctamente");
-        }
+         _context.Eventos.Add(evento);
+         await _context.SaveChangesAsync();
 
-        [HttpPut("{Id_Evento}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ModificarEvento(int Id_Evento)
-        {
-            var evento = await _context.Eventos.FindAsync(Id_Evento);
-            if (evento == null)
-                return NotFound();
+         return CreatedAtAction(nameof(PostEvento), new { id = evento.Id_Evento }, evento);
+     }
 
-            evento.Estado = true;
-            _context.SaveChanges();
+     // PUT: api/Eventos/5
+     [Authorize(Roles = "Admin")]
+     [HttpPut("{id}")]
+     public async Task<IActionResult> PutEvento(int id, Eventos evento)
+     {
+         if (id != evento.Id_Evento)
+         {
+             return BadRequest();
+         }
 
-            return Ok($"Estado del evento {evento.Nombre_Evento} cambiado exitosamente");
-        }
+         _context.Entry(evento).State = EntityState.Modified;
 
+         try
+         {
+             await _context.SaveChangesAsync();
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             if (!EventoExists(id))
+             {
+                 return NotFound();
+             }
+             else
+             {
+                 throw;
+             }
+         }
 
-        [HttpDelete("{Id_Evento}")]
-        public async Task<IActionResult> DeleteEvento(int Id_Evento)
-        {
-            var evento = await _context.Eventos.FindAsync(Id_Evento);
-            if (evento == null)
-                return NotFound();
+         return NoContent();
+     }
 
-            _context.Eventos.Remove(evento);
-            await _context.SaveChangesAsync();
+     // DELETE: api/Eventos/5
+     [Authorize(Roles = "Admin")]
+     [HttpDelete("{id}")]
+     public async Task<IActionResult> DeleteEvento(int id)
+     {
+         var evento = await _context.Eventos.FindAsync(id);
+         if (evento == null)
+         {
+             return NotFound();
+         }
 
-            return Ok("Evento eliminado exitosamente");
-        }
+         _context.Eventos.Remove(evento);
+         await _context.SaveChangesAsync();
+
+         return NoContent();
+     }
+
+     private bool EventoExists(int id)
+     {
+         return _context.Eventos.Any(e => e.Id_Evento == id);
+     }
     }
 }

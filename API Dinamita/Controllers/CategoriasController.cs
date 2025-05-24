@@ -33,27 +33,17 @@ namespace API_Dinamita.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutCategorias(int id, Categorias categoria)
         {
-            if (id != categoria.Id_Categoria)
-            {
-                return BadRequest();
-            }
+            if (id != categoria.Id_Categoria){ return BadRequest();}
 
             _context.Entry(categoria).State = EntityState.Modified;
 
             try
-            {
-                await _context.SaveChangesAsync();
-            }
+            { await _context.SaveChangesAsync();}
             catch (DbUpdateConcurrencyException)
             {
-                if (!CategoriasExists(id))
-                {
-                    return NotFound();
-                }
+                if (!CategoriasExists(id)){return NotFound();}
                 else
-                {
-                    throw;
-                }
+                { throw;}
             }
 
             return NoContent();
