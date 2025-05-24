@@ -28,7 +28,7 @@ namespace API_Dinamita.Controllers
             if (evento == null)
                 return NotFound();
 
-            if (evento.Tickets_Disponibles < cantidad)
+            if (evento.Tickets_Disponible < cantidad)
                 return BadRequest("Cantidad no permitida");
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -51,10 +51,11 @@ namespace API_Dinamita.Controllers
                     Id_Evento = ticketDto.Id_Evento
                 };
                 _context.Tickets.Add(ticket);
-                evento.Tickets_Disponibles -= 1;
+                evento.Tickets_Disponible -= 1;
             }
             await _context.SaveChangesAsync();
-            return Ok(new {
+            return Ok(new
+            {
                 mensaje = "Compra realizada exitosamente"
             });
         }
