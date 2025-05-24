@@ -1,7 +1,7 @@
-﻿using API_Dinamita.Migrations;
-using API_Dinamita.Models;
+﻿using API_Dinamita.Models;
 using API_Dinamita.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Eventos = API_Dinamita.Models.Eventos;
 
@@ -40,6 +40,7 @@ namespace API_Dinamita.Controllers
         }
 
         // POST: api/Eventos
+        [Authorize (Roles ="Admin")]
         [HttpPost]
         public async Task<ActionResult<Eventos>> PostEvento(EventosDto eventodto)
         {
@@ -69,15 +70,28 @@ namespace API_Dinamita.Controllers
         }
 
         // PUT: api/Eventos/5
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEvento(int id, Eventos evento)
+        public async Task<IActionResult> PutEvento(int id, EventosDto evento)
         {
-            if (id != evento.Id_Evento)
+            var eventoExistente = await _context.Eventos.FindAsync(id);
+            if (eventoExistente == null)
             {
-                return BadRequest();
+                return NotFound("Evento no existe");
             }
 
-            _context.Entry(evento).State = EntityState.Modified;
+            eventoExistente.Nombre_Evento = evento.Nombre_Evento;
+            eventoExistente.Descripcion = evento.Descripcion;
+            eventoExistente.Nombre_Lugar = evento.Nombre_Lugar;
+            eventoExistente.Direccion_Lugar = evento.Direccion_Lugar;
+            eventoExistente.Aforo_Max = evento.Aforo_Max;
+            eventoExistente.PrecioTicket = evento.PrecioTicket;
+            eventoExistente.Tickets_Vendidos = evento.Tickets_Vendidos;
+            eventoExistente.Estado = evento.Estado;
+            eventoExistente.Categoria = evento.Categoria;
+
+
+            _context.Entry(eventoExistente).State = EntityState.Modified;
 
             try
             {
@@ -87,7 +101,7 @@ namespace API_Dinamita.Controllers
             {
                 if (!EventoExists(id))
                 {
-                    return NotFound();
+                    return NotFound("Fallo la modificacion en base de datos");
                 }
                 else
                 {
@@ -95,10 +109,11 @@ namespace API_Dinamita.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok("Modificado");
         }
 
         // DELETE: api/Eventos/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEvento(int id)
         {
