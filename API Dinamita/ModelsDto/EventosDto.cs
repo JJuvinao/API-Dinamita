@@ -8,7 +8,7 @@
         public string? Direccion_Lugar { get; set; }
         public int Aforo_Max { get; set; }
         public float PrecioTicket { get; set; }
-        public int Tickets_Vendidos { get; set; }
+        public int Tickets_Disponible { get; set; }
         public bool Estado { get; set; }
         public string? Categoria { get; set; }
     }
