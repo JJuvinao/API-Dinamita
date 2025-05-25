@@ -25,7 +25,8 @@ namespace API_Dinamita.Migrations
                     PrecioTicket = table.Column<float>(type: "real", nullable: false),
                     Tickets_Disponible = table.Column<int>(type: "int", nullable: false),
                     Estado = table.Column<bool>(type: "bit", nullable: false),
-                    Categoria = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Categoria = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Imagen = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
                 },
                 constraints: table =>
                 {
