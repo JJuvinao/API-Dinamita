@@ -30,7 +30,7 @@ namespace API_Dinamita.Controllers
             return await _context.Categorias.ToListAsync();
         }
 
-           [HttpPut("{Id_Categoria}")]
+        [HttpPut("{Id_Categoria}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutCategorias(int Id_Categoria, CategoriaDto categoriaDto)
         {
