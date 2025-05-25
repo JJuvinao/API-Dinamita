@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Dinamita.Migrations
 {
     [DbContext(typeof(ContextDB))]
-    [Migration("20250524025645_cambiar")]
-    partial class cambiar
+    [Migration("20250525010556_Personas")]
+    partial class Personas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

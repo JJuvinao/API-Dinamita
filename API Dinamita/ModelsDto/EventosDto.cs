@@ -11,5 +11,6 @@
         public int Tickets_Disponible { get; set; }
         public bool Estado { get; set; }
         public string? Categoria { get; set; }
+        public IFormFile? Imagen { get; set; }
     }
 }

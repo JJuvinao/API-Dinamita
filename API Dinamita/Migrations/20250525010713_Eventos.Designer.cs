@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Dinamita.Migrations
 {
     [DbContext(typeof(ContextDB))]
-    [Migration("20250517045101_Eventos")]
+    [Migration("20250525010713_Eventos")]
     partial class Eventos
     {
         /// <inheritdoc />
@@ -44,25 +44,24 @@ namespace API_Dinamita.Migrations
 
             modelBuilder.Entity("API_Dinamita.Models.Eventos", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Id_Evento")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Evento"));
 
                     b.Property<int>("Aforo_Max")
                         .HasColumnType("int");
 
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Descripcion")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Dirreccion_Lugar")
-                        .IsRequired()
+                    b.Property<string>("Direccion_Lugar")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Duracion")
-                        .HasColumnType("int");
 
                     b.Property<bool>("Estado")
                         .HasColumnType("bit");
@@ -70,18 +69,19 @@ namespace API_Dinamita.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Id_Categoria")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre_Evento")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombre_Lugar")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<float>("PrecioTicket")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Tickets_Disponible")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id_Evento");
 
                     b.ToTable("Eventos");
                 });
@@ -102,10 +102,11 @@ namespace API_Dinamita.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Id_Carrito")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NombreUsuario")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -126,6 +127,40 @@ namespace API_Dinamita.Migrations
                     b.ToTable("Personas");
                 });
 
+            modelBuilder.Entity("API_Dinamita.Models.Reportes", b =>
+                {
+                    b.Property<int>("Id_Reporte")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Reporte"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Fecha_Creacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("N_Asistencias")
+                        .HasColumnType("int");
+
+                    b.Property<int>("N_Ventas")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre_Evento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre_Reporte")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id_Reporte");
+
+                    b.ToTable("Reportes");
+                });
+
             modelBuilder.Entity("API_Dinamita.Models.Tickets", b =>
                 {
                     b.Property<int>("Id_Ticket")
@@ -134,18 +169,19 @@ namespace API_Dinamita.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Ticket"));
 
-                    b.Property<int>("Categoria")
-                        .HasColumnType("int");
+                    b.Property<string>("Categoria")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Codigo")
+                    b.Property<string>("CodigoAlfanumerico")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("CodigoQR")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<bool>("Estado")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("EventosId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("Fecha_Entrada")
                         .HasColumnType("datetime2");
@@ -153,10 +189,10 @@ namespace API_Dinamita.Migrations
                     b.Property<DateTime>("Fecha_Expedicion")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Id_Carrito")
+                    b.Property<int>("Id_Evento")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id_Evento")
+                    b.Property<int>("Id_Usuario")
                         .HasColumnType("int");
 
                     b.Property<string>("Nombre_Evento")
@@ -168,21 +204,7 @@ namespace API_Dinamita.Migrations
 
                     b.HasKey("Id_Ticket");
 
-                    b.HasIndex("EventosId");
-
                     b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("API_Dinamita.Models.Tickets", b =>
-                {
-                    b.HasOne("API_Dinamita.Models.Eventos", null)
-                        .WithMany("Tickets")
-                        .HasForeignKey("EventosId");
-                });
-
-            modelBuilder.Entity("API_Dinamita.Models.Eventos", b =>
-                {
-                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }
