@@ -2,85 +2,109 @@ using API_Dinamita.Models;
 using API_Dinamita.ModelsDto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Eventos = API_Dinamita.Models.Eventos;
 
 namespace API_Dinamita.Controllers
 {
-     [Route("api/[controller]")]
- [ApiController]
- public class EventosController : ControllerBase
- {
-     private readonly ContextDB _context;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class EventosController : ControllerBase
+    {
+        private readonly ContextDB _context;
 
-     public EventosController(ContextDB context)
-     {
-         _context = context;
-     }
-
-     // GET: api/Eventos
-     [HttpGet]
-     public async Task<ActionResult<IEnumerable<Eventos>>> GetEventos()
-     {
-         return await _context.Eventos.ToListAsync();
-     }
-
-     // GET: api/Eventos/5
-     [HttpGet("{id}")]
-     public async Task<ActionResult<Eventos>> GetEvento(int id)
-     {
-         var evento = await _context.Eventos.FirstOrDefaultAsync(e => e.Id_Evento == id);
-
-         if (evento == null)
-         {
-             return NotFound();
-         }
-
-         return evento;
-     }
-
-        // POST: api/Eventos
-        [Authorize (Roles ="Admin")]
-        [HttpPost]
-        public async Task<ActionResult<Eventos>> PostEvento(EventosDto eventodto)
+        // Constructor: aquí recibo la base de datos para poder trabajar con ella
+        public EventosController(ContextDB context)
         {
-            if (eventodto == null)
+            _context = context;
+        }
+
+        // Obtener todos los eventos
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Eventos>>> GetEventos()
+        {
+            // Devuelvo la lista completa de eventos
+            return await _context.Eventos.ToListAsync();
+        }
+
+        // Obtener un evento por su id
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Eventos>> GetEvento(int id)
+        {
+            // Busco el evento con el id que me pasan
+            var evento = await _context.Eventos.FirstOrDefaultAsync(e => e.Id_Evento == id);
+
+            // Si no existe, aviso
+            if (evento == null)
+            {
+                return NotFound();
+            }
+
+            // Si existe, lo devuelvo
+            return evento;
+        }
+
+        // Crear un nuevo evento (solo admins)
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<ActionResult<Eventos>> PostEvento(Eventofrom eventofrom)
+        {
+            // Si no me mandan datos, aviso
+            if (eventofrom == null)
             {
                 return BadRequest("Los datos del reporte no son válidos.");
             }
 
-         var evento = new Eventos
-         {
-             Nombre_Evento = eventodto.Nombre_Evento,
-             Descripcion = eventodto.Descripcion,
-             Nombre_Lugar = eventodto.Nombre_Lugar,
-             Direccion_Lugar = eventodto.Direccion_Lugar,
-             Fecha = DateTime.Now,
-             Aforo_Max = eventodto.Aforo_Max,
-             PrecioTicket = eventodto.PrecioTicket,
-             Tickets_Disponible = eventodto.Aforo_Max,
-             Estado = true,
-             Categoria = eventodto.Categoria
-         };
+            // Armo el evento con los datos que recibo
+            var evento = new Eventos
+            {
+                Nombre_Evento = eventofrom.Nombre_Evento,
+                Descripcion = eventofrom.Descripcion,
+                Nombre_Lugar = eventofrom.Nombre_Lugar,
+                Direccion_Lugar = eventofrom.Direccion_Lugar,
+                Fecha = DateTime.Now,
+                Aforo_Max = eventofrom  .Aforo_Max,
+                PrecioTicket = eventofrom.PrecioTicket,
+                Tickets_Disponible = eventofrom.Aforo_Max,
+                Estado = true,
+                Categoria = eventofrom.Categoria
+            };
 
-         _context.Eventos.Add(evento);
-         await _context.SaveChangesAsync();
+            // Si la imagen fue subida, la guardamos en la propiedad del evento
+            if (eventofrom.Imagen != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await eventofrom.Imagen.CopyToAsync(memoryStream);
+                    evento.Imagen = memoryStream.ToArray();
+                }
+            }
 
-         return  Ok("Evento guardado correctamente");
-     }
+            // Guardo el evento en la base de datos
+            _context.Eventos.Add(evento);
+            await _context.SaveChangesAsync();
 
-        // PUT: api/Eventos/5
+            // Aviso que se guardó bien
+            return Ok("Evento guardado correctamente");
+        }
+
+        // Modificar un evento existente (solo admins)
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEvento(int id, EventosDto evento)
         {
+            // Busco el evento que quiero modificar
             var eventoExistente = await _context.Eventos.FindAsync(id);
             if (eventoExistente == null)
             {
                 return NotFound("Evento no existe");
             }
 
+            // Actualizo los datos del evento
             eventoExistente.Nombre_Evento = evento.Nombre_Evento;
             eventoExistente.Descripcion = evento.Descripcion;
             eventoExistente.Nombre_Lugar = evento.Nombre_Lugar;
@@ -91,15 +115,27 @@ namespace API_Dinamita.Controllers
             eventoExistente.Estado = evento.Estado;
             eventoExistente.Categoria = evento.Categoria;
 
+            // Si la imagen es diferente, la actualizo
+            if (evento.Imagen != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await evento.Imagen.CopyToAsync(memoryStream);
+                    eventoExistente.Imagen = memoryStream.ToArray();
+                }
+            }
 
+            // Marco el evento como modificado
             _context.Entry(eventoExistente).State = EntityState.Modified;
 
             try
             {
+                // Guardo los cambios
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
+                // Si el evento no existe, aviso
                 if (!EventoExists(id))
                 {
                     return NotFound("Fallo la modificacion en base de datos");
@@ -110,43 +146,53 @@ namespace API_Dinamita.Controllers
                 }
             }
 
-            return Ok("Modificado");
+            // Aviso que se modificó bien
+            return Ok("Evento modificado correctamente");
         }
 
-        // DELETE: api/Eventos/Estado/5
+        // Cambiar el estado de un evento a activo (solo admins)
         [Authorize(Roles = "Admin")]
         [HttpPut("/Estado/{id}")]
         public async Task<IActionResult> PutEstadoEvento(int id)
         {
+            // Busco el evento
             var evento = await _context.Eventos.FindAsync(id);
             if (evento == null)
             {
                 return NotFound();
             }
+            // Cambio el estado a activo
             evento.Estado = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
+            // Aviso que se cambió el estado
             return Ok($"Estado del evento {evento.Nombre_Evento} cambiado exitosamente");
         }
 
-
+        // Eliminar un evento (solo admins)
         [HttpDelete("{Id_Evento}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteEvento(int Id_Evento)
         {
-             var evento = await _context.Eventos.FindAsync(Id_Evento);
+            // Busco el evento
+            var evento = await _context.Eventos.FindAsync(Id_Evento);
+
+            // Si no existe, aviso
             if (evento == null)
                 return NotFound();
 
+            // Lo elimino de la base de datos
             _context.Eventos.Remove(evento);
             await _context.SaveChangesAsync();
 
+            // Aviso que se eliminó bien
             return Ok("Evento eliminado exitosamente");
-     }
+        }
 
-     private bool EventoExists(int id)
-     {
-         return _context.Eventos.Any(e => e.Id_Evento == id);
-     }
+        // Función para saber si un evento existe
+        private bool EventoExists(int id)
+        {
+            return _context.Eventos.Any(e => e.Id_Evento == id);
+        }
     }
 }
