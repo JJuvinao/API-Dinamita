@@ -49,6 +49,7 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+
 });
 
 builder.Services.AddScoped<JwtHelper>();
