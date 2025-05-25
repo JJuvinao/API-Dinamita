@@ -20,7 +20,7 @@ namespace API_Dinamita.Controllers
             _context = context;
         }
 
-        [HttpPost]
+        [HttpPost("{cantidad}")]
         [Authorize(Roles = "Usuario")]
         public async Task<ActionResult<TicketDto>> PostTicket(TicketDto ticketDto, int cantidad)
         {
