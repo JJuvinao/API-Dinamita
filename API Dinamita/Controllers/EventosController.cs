@@ -51,7 +51,7 @@ namespace API_Dinamita.Controllers
         // Crear un nuevo evento (solo admins)
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<Eventos>> PostEvento(Eventofrom eventofrom)
+        public async Task<ActionResult<Eventofrom>> PostEvento([FromForm] Eventofrom eventofrom)
         {
             // Si no me mandan datos, aviso
             if (eventofrom == null)
