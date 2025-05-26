@@ -77,7 +77,7 @@ namespace API_Dinamita.Controllers
                 Descripcion = eventofrom.Descripcion,
                 Nombre_Lugar = eventofrom.Nombre_Lugar,
                 Direccion_Lugar = eventofrom.Direccion_Lugar,
-                Fecha = DateTime.Now,
+                Fecha = eventofrom.Fecha,
                 Aforo_Max = eventofrom  .Aforo_Max,
                 PrecioTicket = eventofrom.PrecioTicket,
                 Tickets_Disponible = eventofrom.Aforo_Max,
