@@ -59,57 +59,6 @@ namespace API_Dinamita.Controllers
             return Ok(eventosdto);
         }
 
-        // Obtener un evento por su id
-        [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EventoGetDto>> GetEvento(int id)
-        {
-            // Busco el evento con el id que me pasan
-            var evento = await _context.Eventos.FirstOrDefaultAsync(e => e.Id_Evento == id);
-
-            // Si no existe, aviso
-            if (evento == null)
-            {
-                return NotFound();
-            }
-
-            var eventodto = new EventoGetDto
-            {
-                Id_Evento = evento.Id_Evento,
-                Nombre_Evento = evento.Nombre_Evento,
-                Descripcion = evento.Descripcion,
-                Nombre_Lugar = evento.Nombre_Lugar,
-                Direccion_Lugar = evento.Direccion_Lugar,
-                Fecha = evento.Fecha,
-                Aforo_Max = evento.Aforo_Max,
-                Tickets_Disponible = evento.Tickets_Disponible,
-                Estado = evento.Estado,
-                Categoria = evento.Categoria,
-                Imagen = evento.Imagen != null ? Convert.ToBase64String(evento.Imagen) : null
-            };
-
-            // Si existe, lo devuelvo
-            return Ok(eventodto);
-        }
-
-        private string ConvertBytesToBase64(byte[] bytes)
-        {
-            return Convert.ToBase64String(bytes);
-        }
-
-        [HttpGet("imagen/{id}")]
-        public async Task<IActionResult> GetImagen(int id)
-        {
-            var evento = await _context.Eventos.FindAsync(id);
-            if (evento == null || evento.Imagen == null)
-            {
-                return NotFound("Evento o imagen no encontrada");
-            }
-
-            // Devuelve la imagen como un archivo
-            return File(evento.Imagen, "image/jpeg"); // Ajusta el tipo MIME según el formato (jpeg, png, etc.)
-        }
-
         // Crear un nuevo evento (solo admins)
         [Authorize(Roles = "Admin")]
         [HttpPost]
